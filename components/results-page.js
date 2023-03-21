@@ -48,7 +48,7 @@ class ResultsPage {
     // };
     // fetchIndexVars()
      // .then((res) => {
-        this._searchClient = algoliasearch('MyAppId', 'MyApiKey');
+        this._searchClient = algoliasearch('My-App-ID', 'API-Key');
         this._searchInstance = instantsearch({
           indexName: 'my-index',
           searchClient: this._searchClient,
@@ -68,11 +68,12 @@ class ResultsPage {
    * @returns {void}
    */
   _registerWidgets() {
+    const currentCategory = decodeURI(sessionStorage.getItem('AlgoliaCategory'))
     if (this._searchInstance) {
       this._searchInstance.addWidgets([
         configure({
-            analyticsTags: ['categoria', 'location', 'anonymous', 'aparato', 'autocomplete'],
-            ruleContexts: ['categoria', 'location', 'anonymous', 'aparato', 'global-search']
+            analyticsTags: [currentCategory, 'location', 'anonymous', 'aparato', 'autocomplete'],
+            ruleContexts: [currentCategory, 'location', 'anonymous', 'aparato', 'global-search']
         }),
         searchBox({
           container: '#searchbox',
