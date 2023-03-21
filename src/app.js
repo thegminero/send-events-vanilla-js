@@ -1,4 +1,4 @@
-import ResultsPage from './components/results-page';
+import ResultsPage from '../components/results-page';
 
 class SampleSearchWithEvents {
   constructor() {

@@ -4,13 +4,14 @@ import instantsearch from 'instantsearch.js';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import {
   searchBox,
+  configure,
   hits,
   pagination,
   refinementList,
 } from 'instantsearch.js/es/widgets';
 import aa from 'search-insights';
 
-import awsExports from '../aws-exports';
+import awsExports from '../src/aws-exports';
 import resultHit from '../templates/result-hit';
 
 import OrderCart from './order-cart';
@@ -21,7 +22,7 @@ import ViewProduct from './view-products';
  * @class ResultsPage
  * @description Instant Search class to display content on main page.
  */
-class ResultPage {
+class ResultsPage {
   constructor() {
     this._registerAWS();
     this._registerClient();
@@ -39,28 +40,25 @@ class ResultPage {
    */
   _registerClient() {
     // Get Secrets (Api Key and AppId from AWS)
-    const fetchIndexVars = () => {
-      const response = API.get('tam', '/envars', {
-        responseType: 'json',
-      });
-      return response;
-    };
-    fetchIndexVars()
-      .then((res) => {
-        this._searchClient = algoliasearch(
-          res.secrets[1].Value,
-          res.secrets[0].Value
-        );
+    // const fetchIndexVars = () => {
+    //   const response = API.get('tam', '/envars', {
+    //     responseType: 'json',
+    //   });
+    //   return response;
+    // };
+    // fetchIndexVars()
+     // .then((res) => {
+        this._searchClient = algoliasearch('MyAppId', 'MyApiKey');
         this._searchInstance = instantsearch({
-          indexName: 'ElectronicProducts',
+          indexName: 'my-index',
           searchClient: this._searchClient,
         });
-      })
-      .then(() => {
+    //   })
+    //   .then(() => {
         this._addBindEvents();
         this._registerWidgets();
         this._startSearch();
-      });
+      //});
   }
 
   // eslint-disable-next-line jsdoc/require-description
@@ -72,6 +70,10 @@ class ResultPage {
   _registerWidgets() {
     if (this._searchInstance) {
       this._searchInstance.addWidgets([
+        configure({
+            analyticsTags: ['categoria', 'location', 'anonymous', 'aparato', 'autocomplete'],
+            ruleContexts: ['categoria', 'location', 'anonymous', 'aparato', 'global-search']
+        }),
         searchBox({
           container: '#searchbox',
         }),
@@ -86,11 +88,11 @@ class ResultPage {
         }),
         refinementList({
           container: '#brand-facet',
-          attribute: 'brand',
+          attribute: 'brand_name',
         }),
         refinementList({
           container: '#categories-facet',
-          attribute: 'categories',
+          attribute: 'categories_aborescence',
         }),
       ]);
     }
@@ -140,4 +142,4 @@ class ResultPage {
   }
 }
 
-export default ResultPage;
+export default ResultsPage;
